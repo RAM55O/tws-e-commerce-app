@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: frontend
+  namespace: easyshop
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: frontend
+
+  template:
+    metadata:
+      labels:
+        app: frontend
+
+    spec:
+      containers:
+
+      - name: frontend
+        image: ramji55/easyshop-frontend:latest
+        imagePullPolicy: Always
+
+        ports:
+        - containerPort: 3000
+
+        env:
+
+        - name: MONGODB_URI
+          valueFrom:
+            configMapKeyRef:
+              name: easyshop-config
+              key: MONGODB_URI
+
+        - name: NEXTAUTH_URL
+          valueFrom:
+            configMapKeyRef:
+              name: easyshop-config
+              key: NEXTAUTH_URL
+
+        - name: NEXT_PUBLIC_API_URL
+          valueFrom:
+            configMapKeyRef:
+              name: easyshop-config
+              key: NEXT_PUBLIC_API_URL
+
+        - name: NEXTAUTH_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: easyshop-secret
+              key: NEXTAUTH_SECRET
+
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: easyshop-secret
+              key: JWT_SECRET

@@ -1,55 +1,38 @@
-version: '3.8'
+version: "3.8"
 
 services:
+
   mongodb:
-    image: mongo:latest
+    image: mongo:7
     container_name: easyshop-mongodb
+
+    restart: always
+
     ports:
       - "27017:27017"
+
     volumes:
       - mongodb_data:/data/db
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-    networks:
-      - easyshop-network
 
-  migration:
-    build:
-      context: .
-      dockerfile: scripts/Dockerfile.migration
-    container_name: easyshop-migration
-    env_file:
-      - .env.local
+  frontend:
+    build: .
+
+    container_name: easyshop-frontend
+
+    restart: always
+
     depends_on:
-      mongodb:
-        condition: service_healthy
-    networks:
-      - easyshop-network
+      - mongodb
 
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: easyshop
     ports:
       - "3000:3000"
-    env_file:
-      - .env.local
-    depends_on:
-      migration:
-        condition: service_completed_successfully
-    networks:
-      - easyshop-network
-    restart: unless-stopped
 
-networks:
-  easyshop-network:
-    name: easyshop-network
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/easyshop      
+      NEXTAUTH_URL: http://localhost:3000
+      NEXT_PUBLIC_API_URL: http://localhost:3000/api
+      NEXTAUTH_SECRET: HmaFjYZ2jbUK7Ef+wZrBiJei4ZNGBAJ5IdiOGAyQegw=
+      JWT_SECRET: e5e425764a34a2117ec2028bd53d6f1388e7b90aeae9fa7735f2469ea3a6cc8c
 
 volumes:
   mongodb_data:
-    name: mongodb_data
