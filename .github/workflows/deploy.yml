@@ -27,11 +27,9 @@ jobs:
         run: |
           docker push ramji55/easyshop-frontend:${{ github.sha }}
 
+      
       - name: Update Kubernetes Deployment
-        run: |
-          kubectl set image deployment/frontend \
-          frontend=ramji55/easyshop-frontend:${{ github.sha }} \
-          -n easyshop
+        run: kubectl set image deployment/frontend frontend=ramji55/easyshop-frontend:${{ github.sha }} -n easyshop
 
       - name: Wait for Rollout
         run: |
