@@ -10,7 +10,7 @@ EasyShop is a modern, full-stack e-commerce platform built with Next.js 14, Type
 
 ## ✨ Features
 
-- 🎨 Modern and responsive UI with dark mode support
+- 🎨 Modern and responsive UI with dark mode support   mnb
 - 🔐 Secure JWT-based authentication
 - 🛒 Real-time cart management with Redux
 - 📱 Mobile-first design approach
@@ -496,5 +496,6 @@ kubectl get svc nginx-ingress-ingress-nginx-controller -n ingress-nginx -o jsonp
 ![EasyShop Website Screenshot](./public/Deployed.png)
 
 ### Your project is now deployed.
-#   t w s - e - c o m m e r c e - a p p  
+#   t w s - e - c o m m e r c e - a p p 
+ 
  
