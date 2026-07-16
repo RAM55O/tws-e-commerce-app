@@ -19,7 +19,7 @@ EasyShop is a modern, full-stack e-commerce platform built with Next.js 14, Type
 - 📦 Multiple product categories
 - 👤 User profiles and order history
 - 🌙 Dark/Light theme support
-
+as
 ## 🏗️ Architecture
 
 EasyShop follows a three-tier architecture pattern:
