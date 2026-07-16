@@ -19,7 +19,7 @@ jobs:
           username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build Docker Image
+      - name: Build Docker Images
         run: |
           docker build -t ramji55/easyshop-frontend:${{ github.sha }} .
           docker tag ramji55/easyshop-frontend:${{ github.sha }} ramji55/easyshop-frontend:latest
@@ -29,7 +29,12 @@ jobs:
           docker push ramji55/easyshop-frontend:${{ github.sha }}
           docker push ramji55/easyshop-frontend:latest
 
-      - name: Create Namespace (if it doesn't exist)
+      - name: Check Kubernetes Connection
+        run: |
+          kubectl cluster-info
+          kubectl get nodes
+
+      - name: Create Namespace
         run: |
           kubectl create namespace easyshop --dry-run=client -o yaml | kubectl apply -f -
 
@@ -37,12 +42,16 @@ jobs:
         run: |
           kubectl apply -f k8s/
 
-      - name: Update Frontend Image
+      - name: Verify Namespace
         run: |
-          kubectl set image deployment/frontend \
-          frontend=ramji55/easyshop-frontend:${{ github.sha }} \
-          -n easyshop
+          kubectl get ns
+
+      - name: Verify Deployments
+        run: |
+          kubectl get deployments -n easyshop
+
+      - name: Update Frontend Image
+        run: kubectl set image deployment/frontend frontend=ramji55/easyshop-frontend:${{ github.sha }} -n easyshop
 
       - name: Wait for Rollout
-        run: |
-          kubectl rollout status deployment/frontend -n easyshop
+        run: kubectl rollout status deployment/frontend -n easyshop
