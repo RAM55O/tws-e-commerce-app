@@ -22,14 +22,26 @@ jobs:
       - name: Build Docker Image
         run: |
           docker build -t ramji55/easyshop-frontend:${{ github.sha }} .
+          docker tag ramji55/easyshop-frontend:${{ github.sha }} ramji55/easyshop-frontend:latest
 
-      - name: Push Docker Image
+      - name: Push Docker Images
         run: |
           docker push ramji55/easyshop-frontend:${{ github.sha }}
+          docker push ramji55/easyshop-frontend:latest
 
-      
-      - name: Update Kubernetes Deployment
-        run: kubectl set image deployment/frontend frontend=ramji55/easyshop-frontend:${{ github.sha }} -n easyshop
+      - name: Create Namespace (if it doesn't exist)
+        run: |
+          kubectl create namespace easyshop --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Apply Kubernetes Manifests
+        run: |
+          kubectl apply -f k8s/
+
+      - name: Update Frontend Image
+        run: |
+          kubectl set image deployment/frontend \
+          frontend=ramji55/easyshop-frontend:${{ github.sha }} \
+          -n easyshop
 
       - name: Wait for Rollout
         run: |
